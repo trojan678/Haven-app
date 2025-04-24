@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "273368980217",
+    "project_id": "haven-13f1f",
+    "storage_bucket": "haven-13f1f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273368980217:android:394aa902f229277cdd2028",
+        "android_client_info": {
+          "package_name": "com.example.haven"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxqmaiFIx9t5TWI-CA42hgj3YkeULH5O8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
