@@ -10,14 +10,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.haven.components.ParlorCard
 import com.example.haven.model.MassageParlor
 import com.example.haven.model.MassageType
 import com.example.haven.R
+import java.net.URLEncoder
 
 
 @Composable
-fun Homescreen() {
+fun Homescreen(navController: NavController) {
     var selectedMassageType by remember { mutableStateOf("") }
 
     val massageTypes = listOf(
@@ -73,10 +75,13 @@ fun Homescreen() {
 
         ParlorList(
             parlors = massageParlors,
-            selectedMassageType = selectedMassageType
+            selectedMassageType = selectedMassageType,
+            onBookClick = { parlor ->
+                val encodedParlorName = URLEncoder.encode(parlor.name, "UTF-8")
+                navController.navigate("receipt/${encodedParlorName}/${selectedMassageType}/${parlor.priceRange}")}
         )
-    }
-}
+            }}
+
 
 @Composable
 private fun MassageTypeFilter(
@@ -110,12 +115,12 @@ private fun MassageTypeFilter(
 @Composable
 private fun ParlorList(
     parlors: List<MassageParlor>,
-    selectedMassageType: String
+    selectedMassageType: String,
+    onBookClick: (MassageParlor) -> Unit
 ) {
     val filteredParlors = parlors.filter {
         selectedMassageType.isEmpty() || it.offeredMassages.contains(selectedMassageType)
     }
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -125,7 +130,7 @@ private fun ParlorList(
             ParlorCard(
                 parlor = parlor,
                 modifier = Modifier.fillMaxWidth(),
-                onBookClick = { /* Handle booking */ }
+                onBookClick = { onBookClick(parlor) }
             )
         }
     }

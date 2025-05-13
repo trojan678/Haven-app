@@ -7,6 +7,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.haven.screens.Loginscreen
 import com.example.haven.screens.Homescreen
 import com.example.haven.screens.Registerscreen
+import com.example.haven.screens.MessageReceiptScreen
+import androidx.navigation.navArgument
+import androidx.navigation.NavType
 
 
 
@@ -35,7 +38,22 @@ fun NavGraph() {
         }
 
         composable("home") {
-            Homescreen()
+            Homescreen(navController= navController)
+        }
+        composable (
+            route = "receipt/{parlorName}/{massageType}/{priceRange}",
+            arguments = listOf(
+                navArgument("parlorName") { type = NavType.StringType },
+                navArgument("massageType") { type = NavType.StringType },
+                navArgument("price") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+                MessageReceiptScreen(
+                    parlorName = backStackEntry.arguments?.getString("parlorName") ?: "",
+                    massageType = backStackEntry.arguments?.getString("massageType") ?: "",
+                    price = backStackEntry.arguments?.getString("price") ?: "",
+                    navController = navController
+                ) { navController.popBackStack() }
         }
     }
 }
