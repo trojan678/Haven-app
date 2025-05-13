@@ -5,7 +5,10 @@ plugins {
     //id("com.android.application")
     id("com.google.gms.google-services") version "4.4.2" apply false
     id("kotlin-android")
+
 }
+apply(plugin = "com.google.gms.google-services")
+
 
 android {
     namespace = "com.example.haven"
@@ -71,5 +74,13 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.navigation.compose.v277)
+    //implementation(libs.kotlinx.coroutines.play.services)
+    implementation (libs.androidx.foundation)
+    implementation (libs.androidx.material3.v120)
+    implementation (libs.coil.compose)
+
+
+
 
 }
