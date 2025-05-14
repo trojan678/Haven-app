@@ -80,7 +80,4 @@ dependencies {
     implementation (libs.androidx.material3.v120)
     implementation (libs.coil.compose)
 
-
-
-
 }

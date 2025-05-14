@@ -10,7 +10,7 @@ import com.example.haven.screens.Registerscreen
 import com.example.haven.screens.MessageReceiptScreen
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
-
+import java.net.URLDecoder
 
 
 @Composable
@@ -45,13 +45,17 @@ fun NavGraph() {
             arguments = listOf(
                 navArgument("parlorName") { type = NavType.StringType },
                 navArgument("massageType") { type = NavType.StringType },
-                navArgument("price") { type = NavType.StringType }
+                navArgument("priceRange") { type = NavType.StringType }
             )
         ) { backStackEntry ->
+            val parlorName = URLDecoder.decode(backStackEntry.arguments?.getString("parlorName"), "UTF-8")
+            val massageType = URLDecoder.decode(backStackEntry.arguments?.getString("massageType"), "UTF-8")
+            val priceRange = backStackEntry.arguments?.getString("priceRange") ?: ""
+
                 MessageReceiptScreen(
-                    parlorName = backStackEntry.arguments?.getString("parlorName") ?: "",
-                    massageType = backStackEntry.arguments?.getString("massageType") ?: "",
-                    price = backStackEntry.arguments?.getString("price") ?: "",
+                    parlorName = parlorName,
+                    massageType = massageType,
+                    price = priceRange,
                     navController = navController
                 ) { navController.popBackStack() }
         }

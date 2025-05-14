@@ -17,7 +17,7 @@ fun MessageReceiptScreen(
     massageType: String?,
     price: String?,
     navController: NavController,
-    onBackClick: () -> Boolean
+    onBackClick: () -> Unit
 ) {
     val decodedParlor = URLDecoder.decode(parlorName ?: "", "UTF-8")
     val decodedMassage = URLDecoder.decode(massageType ?: "", "UTF-8")
@@ -45,6 +45,10 @@ fun MessageReceiptScreen(
             DetailRow("Massage Parlor:", decodedParlor)
             DetailRow("Massage Type:", decodedMassage)
             DetailRow("Total Price:", formattedPrice)
+
+            Button(onClick = onBackClick) {
+                Text("Confirm Booking")
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))

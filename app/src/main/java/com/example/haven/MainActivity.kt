@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HavenTheme {
                 val navController = rememberNavController()
-                HavenApp( navController = navController)
+                HavenApp(navController = navController)
             }
         }
     }
@@ -35,7 +35,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun HavenApp(navController: NavController) {
     val navController = rememberNavController()
-
     NavHost(
         navController = navController,
         startDestination = "login"
@@ -71,9 +70,8 @@ fun HavenApp(navController: NavController) {
                 parlorName = URLDecoder.decode(parlorName, "UTF-8"),
                 massageType = URLDecoder.decode(massageType, "UTF-8"),
                 price = price,
-                onBackClick = { navController.popBackStack() },
-                navController = TODO()
-            )
+                navController = navController
+            ){ navController.popBackStack() }
         }
     }
 }

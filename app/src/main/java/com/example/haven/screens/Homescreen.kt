@@ -78,6 +78,7 @@ fun Homescreen(navController: NavController) {
             selectedMassageType = selectedMassageType,
             onBookClick = { parlor ->
                 val encodedParlorName = URLEncoder.encode(parlor.name, "UTF-8")
+                val encodedMassageType = URLEncoder.encode(selectedMassageType, "UTF-8")
                 navController.navigate("receipt/${encodedParlorName}/${selectedMassageType}/${parlor.priceRange}")}
         )
             }}
