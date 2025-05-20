@@ -79,5 +79,6 @@ dependencies {
     implementation (libs.androidx.foundation)
     implementation (libs.androidx.material3.v120)
     implementation (libs.coil.compose)
+    //implementation (com.airbnb.android:lottie-compose:5.2.0)
 
 }

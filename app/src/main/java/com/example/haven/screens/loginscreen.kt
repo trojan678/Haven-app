@@ -43,7 +43,7 @@ fun Loginscreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Haven App", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text("Welcome to Haven", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -73,7 +73,7 @@ fun Loginscreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         TextButton(onClick = onRegisterClick) {
-            Text("Don't have an account? Register")
+            Text("Don't have an account? Register Here")
         }
 
         state.error?.let {
