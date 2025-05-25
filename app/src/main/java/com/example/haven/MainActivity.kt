@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import com.example.haven.screens.Homescreen
 import com.example.haven.screens.Loginscreen
 import com.example.haven.screens.MessageReceiptScreen
+import com.example.haven.screens.ProfileScreen
 import com.example.haven.screens.Registerscreen
 import com.example.haven.ui.theme.HavenTheme
 import com.google.firebase.FirebaseApp
@@ -72,6 +73,9 @@ fun HavenApp(navController: NavController) {
                 price = price,
                 navController = navController
             ){ navController.popBackStack() }
+        }
+        composable ("profile_screen") {
+            ProfileScreen(navController = navController)
         }
     }
 }

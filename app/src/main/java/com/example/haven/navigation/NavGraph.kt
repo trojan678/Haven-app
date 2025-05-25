@@ -10,6 +10,7 @@ import com.example.haven.screens.Registerscreen
 import com.example.haven.screens.MessageReceiptScreen
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
+import com.example.haven.screens.ProfileScreen
 import java.net.URLDecoder
 
 
@@ -35,6 +36,9 @@ fun NavGraph() {
                 onRegisterSuccess = { navController.navigate("home") },
                 onLoginClick = { navController.popBackStack ()}
             )
+        }
+        composable("profile_screen") {
+            ProfileScreen(navController = navController)
         }
 
         composable("home") {

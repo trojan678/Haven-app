@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Haven</string>
+    <string name="profile_icon">Profile Icon</string>
+    <string name="name_label">Name:</string>
+    <string name="email_label">Email:</string>
+    <string name="uid_label">User ID:</string>
+    <string name="not_available">Not available</string>
+    <string name="sign_out_button">Sign Out</string>
 </resources>

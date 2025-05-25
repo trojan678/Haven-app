@@ -18,55 +18,65 @@ import com.example.haven.R
 import java.net.URLEncoder
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.zIndex
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.layout.offset
+//import androidx.compose.ui.zIndex
+//import androidx.compose.ui.draw.clip
+//import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.ui.text.font.FontWeight
-import com.google.firebase.auth.FirebaseAuth
+//import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import androidx.compose.material3.DropdownMenu
 
-
+class HomescreenState {
+    var selectedMassageType by mutableStateOf("")
+    //var showProfile by mutableStateOf(false)
+}
 @Composable
 fun Homescreen(navController: NavController) {
     val auth = Firebase.auth
+    val state = remember { HomescreenState() }
     val currentUser = auth.currentUser
-    var selectedMassageType by remember { mutableStateOf("") }
-    var showProfile by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().padding(top = 45.dp)) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding (
+                    horizontal =  16.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
-                text = "Select Massage Type",
+                text = "Select Preferred Massage",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.weight(1f)
             )
-
-            MassageTypeFilter(
-                types = massageTypes,
-                selectedType = selectedMassageType,
-                onTypeSelected = { selectedMassageType = it }
-            )
-
-            ParlorList(
-                parlors = massageParlors,
-                selectedMassageType = selectedMassageType,
-                onBookClick = { parlor ->
-                    val encodedParlorName = URLEncoder.encode(parlor.name, "UTF-8")
-                    val encodedMassageType = URLEncoder.encode(selectedMassageType, "UTF-8")
-                    navController.navigate("receipt/${encodedParlorName}/${encodedMassageType}/${parlor.priceRange}")
-                }
+            Spacer(modifier = Modifier.width(12.dp))
+            ProfileSection(
+                userName = currentUser?.displayName ?: "User",
+                email = currentUser?.email ?: "Email",
+                navController = navController
             )
         }
-        ProfileSection(
-            userName = currentUser?.displayName ?: "Guest",
-            email = currentUser?.email ?: "Not logged in",
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.TopStart)
-                .zIndex(1f)
+
+        MassageTypeFilter(
+            types = massageTypes,
+            selectedType = state.selectedMassageType,
+            onTypeSelected = { state.selectedMassageType = it }
+        )
+
+        ParlorList(
+            parlors = massageParlors,
+            selectedMassageType = state.selectedMassageType,
+            onBookClick = { parlor ->
+                val encodedParlorName = URLEncoder.encode(parlor.name, "UTF-8")
+                val encodedMassageType = URLEncoder.encode(state.selectedMassageType, "UTF-8")
+                navController.navigate("receipt/${encodedParlorName}/${encodedMassageType}/${parlor.priceRange}")
+            }
         )
     }
 }
@@ -75,6 +85,7 @@ fun Homescreen(navController: NavController) {
 private fun ProfileSection(
     userName: String,
     email: String,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -92,30 +103,36 @@ private fun ProfileSection(
             )
         }
 
-        if (expanded) {
-            Card(
-                modifier = Modifier
-                    .offset(y = 48.dp)
-                    .width(200.dp),
-                elevation = CardDefaults.cardElevation(4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = userName,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = email,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
+       DropdownMenu(
+           expanded = expanded,
+           onDismissRequest = { expanded = false },
+           modifier = Modifier.widthIn(min = 180.dp, max = 240.dp)
+       ) {
+           Column (modifier = Modifier.padding(16.dp)
+           ) {
+               Text(
+                   text = userName,
+                   style = MaterialTheme.typography.titleMedium,
+                   fontWeight = FontWeight.Bold
+               )
+               Spacer(modifier = Modifier.height(8.dp))
+               Text(
+                   text = email,
+                   style = MaterialTheme.typography.bodySmall,
+                   color = MaterialTheme.colorScheme.onSurfaceVariant
+               )
+               Spacer(modifier = Modifier.height(16.dp))
+               Button(
+                   onClick = {
+                       expanded = false
+                       navController.navigate("profile_screen")
+                   },
+                   modifier = Modifier.fillMaxWidth()
+               ) {
+                   Text("View Profile")
+               }
+           }
+       }
     }
 }
 
