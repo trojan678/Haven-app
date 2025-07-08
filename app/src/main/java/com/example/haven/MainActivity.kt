@@ -13,12 +13,12 @@ import androidx.navigation.navArgument
 import com.example.haven.screens.Homescreen
 import com.example.haven.screens.Loginscreen
 import com.example.haven.screens.MessageReceiptScreen
+import com.example.haven.screens.PaymentScreen
 import com.example.haven.screens.ProfileScreen
 import com.example.haven.screens.Registerscreen
 import com.example.haven.ui.theme.HavenTheme
 import com.google.firebase.FirebaseApp
 import java.net.URLDecoder
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,16 +26,16 @@ class MainActivity : ComponentActivity() {
         FirebaseApp.initializeApp(this)
         setContent {
             HavenTheme {
-                val navController = rememberNavController()
-                HavenApp(navController = navController)
+                HavenApp()
             }
         }
     }
 }
 
 @Composable
-fun HavenApp(navController: NavController) {
+fun HavenApp() {
     val navController = rememberNavController()
+
     NavHost(
         navController = navController,
         startDestination = "login"
@@ -46,15 +46,18 @@ fun HavenApp(navController: NavController) {
                 onRegisterClick = { navController.navigate("register") }
             )
         }
+
         composable("register") {
             Registerscreen(
                 onRegisterSuccess = { navController.navigate("home") },
                 onLoginClick = { navController.popBackStack() }
             )
         }
+
         composable("home") {
             Homescreen(navController = navController)
         }
+
         composable(
             route = "receipt/{parlorName}/{massageType}/{price}",
             arguments = listOf(
@@ -62,7 +65,7 @@ fun HavenApp(navController: NavController) {
                 navArgument("massageType") { type = NavType.StringType },
                 navArgument("price") { type = NavType.StringType }
             )
-            ) { backStackEntry ->
+        ) { backStackEntry ->
             val parlorName = backStackEntry.arguments?.getString("parlorName") ?: ""
             val massageType = backStackEntry.arguments?.getString("massageType") ?: ""
             val price = backStackEntry.arguments?.getString("price") ?: ""
@@ -72,10 +75,24 @@ fun HavenApp(navController: NavController) {
                 massageType = URLDecoder.decode(massageType, "UTF-8"),
                 price = price,
                 navController = navController
-            ){ navController.popBackStack() }
+            ) { navController.popBackStack() }
         }
-        composable ("profile_screen") {
+
+        composable("profile_screen") {
             ProfileScreen(navController = navController)
+        }
+
+        composable(
+            route = "payment/{amount}",
+            arguments = listOf(
+                navArgument("amount") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val amount = backStackEntry.arguments?.getString("amount") ?: ""
+            PaymentScreen(
+                amount = amount,
+                navController = navController
+            )
         }
     }
 }

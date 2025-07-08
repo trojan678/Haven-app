@@ -5,6 +5,9 @@ plugins {
     //id("com.android.application")
     id("com.google.gms.google-services") version "4.4.2" apply false
     id("kotlin-android")
+    id("dagger.hilt.android.plugin")
+    id("kotlin-kapt")
+    //id("androidx.navigation.safeargs.kotlin") version "2.5.3" apply false
 
 }
 apply(plugin = "com.google.gms.google-services")
@@ -79,6 +82,11 @@ dependencies {
     implementation (libs.androidx.foundation)
     implementation (libs.androidx.material3.v120)
     implementation (libs.coil.compose)
-    //implementation (com.airbnb.android:lottie-compose:5.2.0)
+    implementation ("com.google.dagger:hilt-android:2.44")
+    kapt ("com.google.dagger:hilt-android-compiler:2.44")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
 }
