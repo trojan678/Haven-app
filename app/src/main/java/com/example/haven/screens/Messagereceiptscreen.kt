@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import java.net.URLDecoder
 
+
 @Composable
 fun MessageReceiptScreen(
     parlorName: String?,
@@ -36,7 +37,7 @@ fun MessageReceiptScreen(
             fontWeight = FontWeight.Bold
         )
 
-        Divider(color = Color.LightGray, thickness = 1.dp)
+        HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
 
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -44,25 +45,42 @@ fun MessageReceiptScreen(
         ) {
             DetailRow("Massage Parlor:", decodedParlor)
             DetailRow("Massage Type:", decodedMassage)
-            DetailRow("Total Price:", formattedPrice)
-
-            Button(onClick = onBackClick) {
-                Text("Confirm Booking")
-            }
+            DetailRow("Total Price:", "KSH $formattedPrice")
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Button(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
+        // Two buttons: Back and Confirm Booking
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Confirm Booking", fontSize = 16.sp)
+            // Back button
+            OutlinedButton(
+                onClick = onBackClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(50.dp)
+            ) {
+                Text("Back", fontSize = 16.sp)
+            }
+
+            // Confirm Booking button - Navigate to payment
+            Button(
+                onClick = {
+                    // Extract only numbers from price for payment
+                    val cleanPrice = formattedPrice.filter { it.isDigit() }
+                    navController.navigate("payment/$cleanPrice")
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text("Confirm Booking", fontSize = 16.sp)
+            }
         }
     }
 }

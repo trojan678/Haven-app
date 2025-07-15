@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
+import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,13 +18,14 @@ import com.example.haven.screens.PaymentScreen
 import com.example.haven.screens.ProfileScreen
 import com.example.haven.screens.Registerscreen
 import com.example.haven.ui.theme.HavenTheme
-import com.google.firebase.FirebaseApp
+import com.example.haven.viewModel.PaymentViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.net.URLDecoder
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseApp.initializeApp(this)
         setContent {
             HavenTheme {
                 HavenApp()
@@ -42,14 +44,22 @@ fun HavenApp() {
     ) {
         composable("login") {
             Loginscreen(
-                onLoginSuccess = { navController.navigate("home") },
+                onLoginSuccess = {
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                },
                 onRegisterClick = { navController.navigate("register") }
             )
         }
 
         composable("register") {
             Registerscreen(
-                onRegisterSuccess = { navController.navigate("home") },
+                onRegisterSuccess = {
+                    navController.navigate("home") {
+                        popUpTo("register") { inclusive = true }
+                    }
+                },
                 onLoginClick = { navController.popBackStack() }
             )
         }
@@ -74,8 +84,9 @@ fun HavenApp() {
                 parlorName = URLDecoder.decode(parlorName, "UTF-8"),
                 massageType = URLDecoder.decode(massageType, "UTF-8"),
                 price = price,
-                navController = navController
-            ) { navController.popBackStack() }
+                navController = navController,
+                onBackClick = { navController.popBackStack() }
+            )
         }
 
         composable("profile_screen") {
@@ -89,9 +100,18 @@ fun HavenApp() {
             )
         ) { backStackEntry ->
             val amount = backStackEntry.arguments?.getString("amount") ?: ""
+
+            // Get PaymentViewModel and reset state when navigating to payment screen
+            val paymentViewModel: PaymentViewModel = hiltViewModel()
+
+            LaunchedEffect(Unit) {
+                paymentViewModel.resetPaymentState()
+            }
+
             PaymentScreen(
                 amount = amount,
-                navController = navController
+                navController = navController,
+                viewModel = paymentViewModel
             )
         }
     }
