@@ -7,14 +7,14 @@ import retrofit2.http.POST
 
 interface ApiService {
 
-    @POST("api/v1/mpesa/StkPush")
+    @POST("stk-push")
     suspend fun initiateStkPush(
         @Header("Authorization") authToken: String? = null,
         @Body request: PaymentRequest
     ): Response<PaymentResponse>
 
 
-    @POST("api/v1/mpesa/status")
+    @POST("callback/confirmation")
     suspend fun checkPaymentStatus(
         @Header("Authorization") authToken: String? = null,
         @Body request: StatusRequest

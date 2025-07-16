@@ -17,6 +17,7 @@ import com.example.haven.screens.MessageReceiptScreen
 import com.example.haven.screens.PaymentScreen
 import com.example.haven.screens.ProfileScreen
 import com.example.haven.screens.Registerscreen
+import com.example.haven.screens.SplashScreen // Add this import
 import com.example.haven.ui.theme.HavenTheme
 import com.example.haven.viewModel.PaymentViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,8 +41,19 @@ fun HavenApp() {
 
     NavHost(
         navController = navController,
-        startDestination = "login"
+        startDestination = "splash" // Changed from "login" to "splash"
     ) {
+        // Add splash screen route
+        composable("splash") {
+            SplashScreen(
+                onSplashComplete = {
+                    navController.navigate("login") {
+                        popUpTo("splash") { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable("login") {
             Loginscreen(
                 onLoginSuccess = {

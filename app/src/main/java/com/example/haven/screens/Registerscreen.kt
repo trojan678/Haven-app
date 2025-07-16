@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,6 +23,10 @@ fun Registerscreen(
 ) {
     val viewModel: RegisterViewModel = viewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // State for password visibility
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -61,7 +66,14 @@ fun Registerscreen(
             onValueChange = viewModel::onPasswordChange,
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val icon = if (passwordVisible) "🙈" else "👁️"
+
+                TextButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Text(text = icon, fontSize = 16.sp)
+                }
+            }
         )
 
         OutlinedTextField(
@@ -69,7 +81,14 @@ fun Registerscreen(
             onValueChange = viewModel::onConfirmPasswordChange,
             label = { Text("Confirm Password") },
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val icon = if (confirmPasswordVisible) "🙈" else "👁️"
+
+                TextButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                    Text(text = icon, fontSize = 16.sp)
+                }
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))

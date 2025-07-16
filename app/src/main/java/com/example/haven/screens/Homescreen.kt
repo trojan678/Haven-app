@@ -4,30 +4,25 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.haven.R
 import com.example.haven.components.ParlorCard
 import com.example.haven.model.MassageParlor
 import com.example.haven.model.MassageType
-import com.example.haven.R
-import java.net.URLEncoder
-import androidx.compose.foundation.layout.Box
-import androidx.compose.ui.Alignment
-//import androidx.compose.ui.zIndex
-//import androidx.compose.ui.draw.clip
-//import androidx.compose.foundation.layout.offset
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.ui.text.font.FontWeight
-//import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import androidx.compose.material3.DropdownMenu
+import java.net.URLEncoder
 
 class HomescreenState {
     var selectedMassageType by mutableStateOf("")
@@ -39,13 +34,15 @@ fun Homescreen(navController: NavController) {
     val state = remember { HomescreenState() }
     val currentUser = auth.currentUser
 
-    Column(modifier = Modifier.fillMaxSize().padding(top = 45.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 45.dp)) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding (
-                    horizontal =  16.dp
+                .padding(
+                    horizontal = 16.dp
                 ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -272,12 +269,19 @@ private fun MassageTypeFilter(
                         contentDescription = null,
                         modifier = Modifier.size(30.dp)
                     )
-                }
+                },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = Color(0xFF6200EE),
+                    selectedLabelColor = Color.White,
+                    selectedLeadingIconColor = Color.White,
+                    containerColor = Color(0xFFF3E5F5),
+                    labelColor = Color(0xFF6200EE),
+                    iconColor = Color(0xFF6200EE)
+                )
             )
         }
     }
 }
-
 @Composable
 private fun ParlorList(
     parlors: List<MassageParlor>,
