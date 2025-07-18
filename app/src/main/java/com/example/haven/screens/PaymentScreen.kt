@@ -1,25 +1,30 @@
 package com.example.haven.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.haven.R
 import com.example.haven.viewModel.PaymentViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.collectAsState
 import android.util.Log
+import androidx.compose.foundation.shape.RoundedCornerShape
+//import androidx.compose.ui.draw.clip
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,158 +52,264 @@ fun PaymentScreen(
     LaunchedEffect(paymentState.success) {
         if (paymentState.success == true) {
             Log.d("PaymentScreen", "Payment successful, navigating to home")
-            // Wait 2 seconds then navigate to home
-            kotlinx.coroutines.delay(2000)
+            kotlinx.coroutines.delay(3000)
             navController.navigate("home") {
                 popUpTo("payment/{amount}") { inclusive = true }
             }
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("M-Pesa Payment") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        Column(
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Background Image
+        Image(
+            painter = painterResource(id = R.drawable.texture5),
+            contentDescription = "Background",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // Semi-transparent overlay
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(24.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.3f),
+                            Color.Black.copy(alpha = 0.6f)
+                        ),
+                        startY = 0f,
+                        endY = Float.POSITIVE_INFINITY
+                    )
+                )
+        )
 
-            Text(
-                text = "Pay KSH $amount",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
-
-            OutlinedTextField(
-                value = phoneNumber,
-                onValueChange = { phoneNumber = it },
-                label = { Text("M-Pesa Phone Number") },
-                placeholder = { Text("07XXXXXXXX or 254XXXXXXX") },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    autoCorrectEnabled = false
-                ),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                supportingText = {
-                    Text("Enter phone number in 07XXXXXXXX or 254XXXXXXX format")
-                }
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            if (paymentState.isLoading) {
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.height(16.dp))
-                Text("Processing payment...")
-            }
-
-            paymentState.message?.let { message ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = when {
-                            paymentState.success == true -> MaterialTheme.colorScheme.primaryContainer
-                            paymentState.success == false -> MaterialTheme.colorScheme.errorContainer
-                            else -> MaterialTheme.colorScheme.surfaceVariant
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("M-Pesa Payment", color = Color.White) },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Color.White
+                            )
                         }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = Color.White
                     )
+                )
+            },
+            containerColor = Color.Transparent
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Payment Amount Card
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF1E3A8A).copy(alpha = 0.9f)
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(
-                        text = message,
-                        color = when {
-                            paymentState.success == true -> MaterialTheme.colorScheme.onPrimaryContainer
-                            paymentState.success == false -> MaterialTheme.colorScheme.onErrorContainer
-                            else -> MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = {
-                    if (phoneNumber.isValidMpesaNumber()) {
-                        val formattedPhone = phoneNumber.toMpesaFormat()
-                        Log.d("PaymentScreen", "Initiating payment: phone=$formattedPhone, amount=$amount")
-                        viewModel.initiatePayment(
-                            phone = formattedPhone,
-                            amount = amount.filter { it.isDigit() }
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Amount to Pay",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
+                        Text(
+                            text = "KSH $amount",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = Color.White,
+                            modifier = Modifier.padding(vertical = 8.dp)
                         )
                     }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                enabled = !paymentState.isLoading && phoneNumber.isValidMpesaNumber()
-            ) {
-                Text(
-                    text = if (paymentState.isLoading) "Processing..." else "Confirm Payment",
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
-
-            // Add a "Try Again" button after failed payments
-            if (paymentState.success == false) {
-                OutlinedButton(
-                    onClick = {
-                        viewModel.resetPaymentState()
-                        phoneNumber = "" // Clear phone number for retry
-                    },
-                    modifier = Modifier.padding(top = 8.dp)
-                ) {
-                    Text("Try Again")
                 }
-            }
 
-            // Add a button to check payment status if transaction ID exists
-            paymentState.transactionId?.let { transactionId ->
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedButton(
-                    onClick = { viewModel.checkPaymentStatus(transactionId) },
-                    enabled = !paymentState.isLoading
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Payment Form Card
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF334155).copy(alpha = 0.9f)
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Check Payment Status")
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = phoneNumber,
+                            onValueChange = { phoneNumber = it },
+                            label = { Text("M-Pesa Phone Number") },
+                            placeholder = { Text("07XXXXXXXX or 254XXXXXXX") },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                autoCorrectEnabled = false
+                            ),
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedBorderColor = Color.White,
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
+                                focusedLabelColor = Color.White,
+                                unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+                                focusedPlaceholderColor = Color.White.copy(alpha = 0.7f),
+                                unfocusedPlaceholderColor = Color.White.copy(alpha = 0.7f),
+                                cursorColor = Color.White
+                            ),
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.Info,
+                                    contentDescription = "Phone format info",
+                                    tint = Color.White.copy(alpha = 0.7f)
+                                )
+                            },
+                            supportingText = {
+                                Text(
+                                    "Enter phone number in 07XXXXXXXX or 254XXXXXXX format",
+                                    color = Color.White.copy(alpha = 0.7f),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Start
+                                )
+                            }
+                        )
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        if (paymentState.isLoading) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color.White
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    "Processing payment...",
+                                    color = Color.White
+                                )
+                            }
+                        }
+
+                        paymentState.message?.let { message ->
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = when (paymentState.success) {
+                                        true -> Color(0xFF065F46).copy(alpha = 0.9f)
+                                        false -> Color(0xFFB91C1C).copy(alpha = 0.9f)
+                                        else -> Color(0xFF334155).copy(alpha = 0.9f)
+                                    }
+                                ),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(
+                                    text = message,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(16.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Button(
+                            onClick = {
+                                if (phoneNumber.isValidMpesaNumber()) {
+                                    val formattedPhone = phoneNumber.toMpesaFormat()
+                                    viewModel.initiatePayment(
+                                        phone = formattedPhone,
+                                        amount = amount.filter { it.isDigit() }
+                                    )
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(52.dp),
+                            enabled = !paymentState.isLoading && phoneNumber.isValidMpesaNumber(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF10B981),
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(
+                                text = if (paymentState.isLoading) "Processing..." else "Confirm Payment",
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+
+                        if (paymentState.success == false) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            OutlinedButton(
+                                onClick = {
+                                    viewModel.resetPaymentState()
+                                    phoneNumber = ""
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = Color.White
+                                ),
+                                border = ButtonDefaults.outlinedButtonBorder(enabled = true)
+                            ) {
+                                Text("Try Again")
+                            }
+                        }
+
+                        paymentState.transactionId?.let { transactionId ->
+                            Spacer(modifier = Modifier.height(16.dp))
+                            OutlinedButton(
+                                onClick = { viewModel.checkPaymentStatus(transactionId) },
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !paymentState.isLoading,
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = Color.White
+                                ),
+                                border = ButtonDefaults.outlinedButtonBorder(enabled = !paymentState.isLoading)
+                            ) {
+                                Text("Check Payment Status")
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-// Updated validation function - accepts both formats
 private fun String.isValidMpesaNumber(): Boolean {
     return when {
-        // 07XXXXXXXX format
         matches("^07[0-9]{8}$".toRegex()) -> true
-        // 254XXXXXXX format
         matches("^254[0-9]{9}$".toRegex()) -> true
         else -> false
     }
 }
 
-// Convert phone number to the format your API expects
 private fun String.toMpesaFormat(): String {
     return when {
-        // If starts with 07, convert to 254
         startsWith("07") -> "254${substring(1)}"
-        // If starts with 254, keep as is
         startsWith("254") -> this
         else -> this
     }
