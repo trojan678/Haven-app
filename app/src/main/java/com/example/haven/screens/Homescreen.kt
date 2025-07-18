@@ -28,6 +28,7 @@ class HomescreenState {
     var selectedMassageType by mutableStateOf("")
     //var showProfile by mutableStateOf(false)
 }
+
 @Composable
 fun Homescreen(navController: NavController) {
     val auth = Firebase.auth
@@ -70,9 +71,9 @@ fun Homescreen(navController: NavController) {
             parlors = massageParlors,
             selectedMassageType = state.selectedMassageType,
             onBookClick = { parlor ->
+                // Navigate to parlor detail screen instead of receipt
                 val encodedParlorName = URLEncoder.encode(parlor.name, "UTF-8")
-                val encodedMassageType = URLEncoder.encode(state.selectedMassageType, "UTF-8")
-                navController.navigate("receipt/${encodedParlorName}/${encodedMassageType}/${parlor.priceRange}")
+                navController.navigate("parlor_detail/$encodedParlorName")
             }
         )
     }
@@ -100,151 +101,149 @@ private fun ProfileSection(
             )
         }
 
-       DropdownMenu(
-           expanded = expanded,
-           onDismissRequest = { expanded = false },
-           modifier = Modifier.widthIn(min = 180.dp, max = 240.dp)
-       ) {
-           Column (modifier = Modifier.padding(16.dp)
-           ) {
-               Text(
-                   text = userName,
-                   style = MaterialTheme.typography.titleMedium,
-                   fontWeight = FontWeight.Bold
-               )
-               Spacer(modifier = Modifier.height(8.dp))
-               Text(
-                   text = email,
-                   style = MaterialTheme.typography.bodySmall,
-                   color = MaterialTheme.colorScheme.onSurfaceVariant
-               )
-               Spacer(modifier = Modifier.height(16.dp))
-               Button(
-                   onClick = {
-                       expanded = false
-                       navController.navigate("profile_screen")
-                   },
-                   modifier = Modifier.fillMaxWidth()
-               ) {
-                   Text("View Profile")
-               }
-           }
-       }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.widthIn(min = 180.dp, max = 240.dp)
+        ) {
+            Column (modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = userName,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = email,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        expanded = false
+                        navController.navigate("profile_screen")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("View Profile")
+                }
+            }
+        }
     }
 }
 
+val massageTypes = listOf(
+    MassageType("Deep Tissue", R.drawable.ic_deep_tissue),
+    MassageType("Swedish", R.drawable.ic_swedish),
+    MassageType("Hot Stone", R.drawable.ic_hot_stone),
+    MassageType("Shiatsu", R.drawable.ic_shiatsu),
+    MassageType("Reflexology", R.drawable.ic_reflexology)
+)
 
-    val massageTypes = listOf(
-        MassageType("Deep Tissue", R.drawable.ic_deep_tissue),
-        MassageType("Swedish", R.drawable.ic_swedish),
-        MassageType("Hot Stone", R.drawable.ic_hot_stone),
-        MassageType("Shiatsu", R.drawable.ic_shiatsu),
-        MassageType("Reflexology", R.drawable.ic_reflexology)
-    )
+val massageParlors = listOf(
+    MassageParlor(
+        name = "Raddison Blu",
+        offeredMassages = listOf("Deep Tissue", "Swedish", "Hot Stone","Shiatsu","Reflexology"),
+        rating = 4.8f,
+        priceRange = "KSH 25000",
+        imageResIds = listOf(
+            R.drawable.blu_spa,
+            R.drawable.blu_2,
+            R.drawable.blu_3,
+        )
+    ),
+    MassageParlor(
+        name = "Gem Forest",
+        offeredMassages = listOf("Swedish", "Shiatsu", "Reflexology"),
+        rating = 4.2f,
+        priceRange = "KSH 15000",
+        imageResIds = listOf(
+            R.drawable.gem_1,
+            R.drawable.gem_2,
+            R.drawable.gem_3,
+        )
+    ),
+    MassageParlor(
+        name = "Gigiri Lions Villa",
+        offeredMassages = listOf("Hot Stone", "Reflexology", "Deep Tissue"),
+        rating = 4.1f,
+        priceRange = "KSH 17500",
+        imageResIds = listOf(
+            R.drawable.gigiri_1,
+            R.drawable.gigiri_2,
+            R.drawable.gigiri_3,
+        )
+    ),
+    MassageParlor(
+        name = "Hotel Mokka City",
+        offeredMassages = listOf("Shiatsu", "Swedish", "Reflexology"),
+        rating = 3.5f,
+        priceRange = "KSH 8500",
+        imageResIds = listOf(
+            R.drawable.mokka_1,
+            R.drawable.mokka_2,
+            R.drawable.mokka_3,
+        )
+    ),
+    MassageParlor(
+        name = "Karen Gables",
+        offeredMassages = listOf("Deep Tissue", "Hot Stone"),
+        rating = 3.9f,
+        priceRange = "KSH 38000",
+        imageResIds = listOf(
+            R.drawable.karen_1,
+            R.drawable.karen_2,
+            R.drawable.karen_3,
+        )
 
-    val massageParlors = listOf(
-        MassageParlor(
-            name = "Raddison Blu",
-            offeredMassages = listOf("Deep Tissue", "Swedish", "Hot Stone","Shiatsu","Reflexology"),
-            rating = 4.8f,
-            priceRange = "KSH 25000",
-            imageResIds = listOf(
-                R.drawable.blu_spa,
-                R.drawable.blu_2,
-                R.drawable.blu_3,
-            )
-        ),
-        MassageParlor(
-            name = "Gem Forest",
-            offeredMassages = listOf("Swedish", "Shiatsu", "Reflexology"),
-            rating = 4.2f,
-            priceRange = "KSH 15000",
-            imageResIds = listOf(
-                R.drawable.gem_1,
-                R.drawable.gem_2,
-                R.drawable.gem_3,
-            )
-        ),
-        MassageParlor(
-            name = "Gigiri Lions Villa",
-            offeredMassages = listOf("Hot Stone", "Reflexology", "Deep Tissue"),
-            rating = 4.1f,
-            priceRange = "KSH 17500",
-            imageResIds = listOf(
-                R.drawable.gigiri_1,
-                R.drawable.gigiri_2,
-                R.drawable.gigiri_3,
-            )
-        ),
-        MassageParlor(
-            name = "Hotel Mokka City",
-            offeredMassages = listOf("Shiatsu", "Swedish", "Reflexology"),
-            rating = 3.5f,
-            priceRange = "KSH 8500",
-            imageResIds = listOf(
-                R.drawable.mokka_1,
-                R.drawable.mokka_2,
-                R.drawable.mokka_3,
-            )
-        ),
-        MassageParlor(
-            name = "Karen Gables",
-            offeredMassages = listOf("Deep Tissue", "Hot Stone"),
-            rating = 3.9f,
-            priceRange = "KSH 38000",
-            imageResIds = listOf(
-                R.drawable.karen_1,
-                R.drawable.karen_2,
-                R.drawable.karen_3,
-            )
-
-        ),
-        MassageParlor(
-            name = "La Maison Royale",
-            offeredMassages = listOf("Swedish", "Shiatsu", "Reflexology"),
-            rating = 4.5f,
-            priceRange = "KSH 6900",
-            imageResIds = listOf(
-                R.drawable.maison_1,
-                R.drawable.maison_2,
-                R.drawable.maison_3,
-            )
-        ),
-        MassageParlor(
-            name = "Ololo Hotel",
-            offeredMassages = listOf("Swedish", "Hot Stone"),
-            rating = 2.3f,
-            priceRange = "KSH 5000",
-            imageResIds = listOf(
-                R.drawable.ololo_1,
-                R.drawable.ololo_2,
-                R.drawable.ololo_3,
-            )
-        ),
-        MassageParlor(
-            name = "Palacina The Residence",
-            offeredMassages = listOf("Deep Tissue", "Swedish"),
-            rating = 3.9f,
-            priceRange = "KSH 12000",
-            imageResIds = listOf(
-                R.drawable.paradise_1,
-                R.drawable.paradise_2,
-                R.drawable.paradise_3,
-            )
-        ),
-        MassageParlor(
-            name = "Sahara West",
-            offeredMassages = listOf("Reflexology"),
-            rating = 4.0f,
-            priceRange = "KSH 3500",
-            imageResIds = listOf(
-                R.drawable.sahara_1,
-                R.drawable.sahara_2,
-                R.drawable.sahara_3,
-            )
+    ),
+    MassageParlor(
+        name = "La Maison Royale",
+        offeredMassages = listOf("Swedish", "Shiatsu", "Reflexology"),
+        rating = 4.5f,
+        priceRange = "KSH 6900",
+        imageResIds = listOf(
+            R.drawable.maison_1,
+            R.drawable.maison_2,
+            R.drawable.maison_3,
+        )
+    ),
+    MassageParlor(
+        name = "Ololo Hotel",
+        offeredMassages = listOf("Swedish", "Hot Stone"),
+        rating = 2.3f,
+        priceRange = "KSH 5000",
+        imageResIds = listOf(
+            R.drawable.ololo_1,
+            R.drawable.ololo_2,
+            R.drawable.ololo_3,
+        )
+    ),
+    MassageParlor(
+        name = "Palacina The Residence",
+        offeredMassages = listOf("Deep Tissue", "Swedish"),
+        rating = 3.9f,
+        priceRange = "KSH 12000",
+        imageResIds = listOf(
+            R.drawable.paradise_1,
+            R.drawable.paradise_2,
+            R.drawable.paradise_3,
+        )
+    ),
+    MassageParlor(
+        name = "Sahara West",
+        offeredMassages = listOf("Reflexology"),
+        rating = 4.0f,
+        priceRange = "KSH 3500",
+        imageResIds = listOf(
+            R.drawable.sahara_1,
+            R.drawable.sahara_2,
+            R.drawable.sahara_3,
         )
     )
-
+)
 
 @Composable
 private fun MassageTypeFilter(
@@ -282,6 +281,7 @@ private fun MassageTypeFilter(
         }
     }
 }
+
 @Composable
 private fun ParlorList(
     parlors: List<MassageParlor>,

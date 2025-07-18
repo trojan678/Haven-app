@@ -13,11 +13,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.haven.screens.Homescreen
 import com.example.haven.screens.Loginscreen
+import com.example.haven.screens.MassageParlorDetailScreen
 import com.example.haven.screens.MessageReceiptScreen
 import com.example.haven.screens.PaymentScreen
 import com.example.haven.screens.ProfileScreen
 import com.example.haven.screens.Registerscreen
-import com.example.haven.screens.SplashScreen // Add this import
+import com.example.haven.screens.SplashScreen
 import com.example.haven.ui.theme.HavenTheme
 import com.example.haven.viewModel.PaymentViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,9 +42,8 @@ fun HavenApp() {
 
     NavHost(
         navController = navController,
-        startDestination = "splash" // Changed from "login" to "splash"
+        startDestination = "splash"
     ) {
-        // Add splash screen route
         composable("splash") {
             SplashScreen(
                 onSplashComplete = {
@@ -78,6 +78,22 @@ fun HavenApp() {
 
         composable("home") {
             Homescreen(navController = navController)
+        }
+
+        // NEW: Parlor Detail Screen Route
+        composable(
+            route = "parlor_detail/{parlorName}",
+            arguments = listOf(
+                navArgument("parlorName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val parlorName = backStackEntry.arguments?.getString("parlorName") ?: ""
+            val decodedParlorName = URLDecoder.decode(parlorName, "UTF-8")
+
+            MassageParlorDetailScreen(
+                parlorName = decodedParlorName,
+                navController = navController
+            )
         }
 
         composable(
